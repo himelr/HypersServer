@@ -6,7 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable()
 export class ActorService {
-  private actorUrl = 'http://localhost:8080/api/response';
+  private actorUrl = '/api/response';
   getMessages (amount: number = 1): Observable<string[]> {
     return this.http.get<string[]>(this.actorUrl + '/' + amount)
     .pipe(
