@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -8,12 +9,13 @@ import { ListvComponent } from './listv/listv.component';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-
+import { HttpModule } from '@angular/http';
 
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { SidenavdemoComponent } from './sidenavdemo/sidenavdemo.component';
 import { FormComponent } from './form/form.component';
+import { ActorService } from './actors/actor.service';
 
 
 @NgModule({
@@ -32,9 +34,11 @@ import { FormComponent } from './form/form.component';
     MaterialModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    HttpModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [ActorService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

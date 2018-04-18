@@ -1,4 +1,6 @@
+import { ActorService } from './../actors/actor.service';
 import { Component, OnInit } from '@angular/core';
+
 
 @Component({
   selector: 'app-welcome',
@@ -7,8 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WelcomeComponent implements OnInit {
 
-  constructor() { }
-
+  value: number;
+  constructor(private actorService: ActorService) { }
+  messages: string[];
+  getMessages() {
+    this.actorService.getMessages(this.value)
+    .subscribe(messages => this.messages = messages);
+  }
   ngOnInit() {
   }
 
