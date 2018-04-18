@@ -1,0 +1,19 @@
+<div class="container">
+<div class="example-container">
+  <mat-form-field>
+    <input matInput placeholder="Input" [(ngModel)]="person.name">
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea matInput placeholder="Textarea"></textarea>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select  placeholder="Select" [(ngModel)]="person.state">
+      <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+  {{person.name}} {{person.state}}
+</div>
+
