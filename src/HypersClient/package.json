@@ -10,8 +10,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postbuild": "npm run deploy",
-    "predeploy": "rimraf ../main/resources/static",
-    "deploy": ""
+    "predeploy": "rimraf ../main/resources/static && mkdirp ../main/resources/static",
+    "deploy": "copyfiles -f dist/** ../main/resources/static"
   },
   "private": true,
   "dependencies": {
