@@ -1,6 +1,9 @@
 package com.example.demo
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Props}
+import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
+import akka.routing.RoundRobinPool
+import com.example.demo.actors.NodeActor
 import com.typesafe.config.ConfigFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -15,11 +18,18 @@ object Application extends App {
   val config = ConfigFactory.load()
   val system = ActorSystem("hyperscluster")
 
-  if (config.getString("akka.remote.netty.tcp.port") == "2555") {
+  if (config.getString("akka.remote.netty.tcp.port") == "2551") {
+    println(s"now creating a router towards node actors")
+    val router = system.actorOf(ClusterRouterPool(
+      local = RoundRobinPool(8),
+      settings = ClusterRouterPoolSettings(
+        totalInstances = 15,
+        maxInstancesPerNode = 4,
+        allowLocalRoutees = false
+      )
+    ).props(Props[NodeActor]),
+      name = "routeractor")
 
-    // your ip address here (sorry)
-    // note you need to change ip address in application.conf, too
-    //val router = system.actorSelection("akka.tcp://hyperscluster@127.0.0.1:2551/user/routeractor")
-
+    println(s"router: ${router.path}")
   }
 }
