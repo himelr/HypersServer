@@ -2,8 +2,12 @@ package com.example.demo.controllers
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
+import akka.routing.RoundRobinPool
 import akka.util.Timeout
+import com.example.demo.MyMsg
+import com.example.demo.actors.NodeActor
 import org.springframework.web.bind.annotation._
 
 import scala.collection.mutable.ArrayBuffer
@@ -13,8 +17,18 @@ import scala.language.postfixOps
 @RestController
 @RequestMapping(path = Array("/api"))
 class AkkaController {
-
-  //val system = ActorSystem("mySystem")
+  val system = ActorSystem("hyperscluster")
+  println(s"now creating a router towards node actors")
+  val router = system.actorOf(ClusterRouterPool(
+    local = RoundRobinPool(8),
+    settings = ClusterRouterPoolSettings(
+      totalInstances = 15,
+      maxInstancesPerNode = 4,
+      allowLocalRoutees = false
+    )
+  ).props(Props[NodeActor]),
+    name = "routeractor")
+  println(s"router: ${router.path}")
 
   @GetMapping(path = Array("/response/{amount}"))
   @ResponseBody def getActorResponse(@PathVariable amount: Int): Array[String] = {
@@ -34,5 +48,19 @@ class AkkaController {
 
     return responseList.toArray
   }
+
+  @GetMapping(path = Array("/response/test"))
+  def getActorResponse2: String = {
+    val router = system.actorSelection("akka.tcp://hyperscluster@127.0.0.1:2554/user/routeractor")
+
+    (1 to 50).foreach(f = (i) => {
+      router ! MyMsg(i)
+      Thread.sleep(500)
+    })
+
+    Thread.sleep(5000)
+    "work"
+  }
+
 }
 
