@@ -7,10 +7,11 @@ import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
 import com.example.demo.MyMsg
-import com.example.demo.actors.NodeActor
+import com.example.demo.actors.{NodeActor, PublishActor}
 import org.springframework.web.bind.annotation._
 
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.Await
 import scala.language.postfixOps
 
 @CrossOrigin(origins = Array("http://localhost:4200", "http://localhost:8080", "https://hypers-server.herokuapp.com"))
@@ -32,7 +33,6 @@ class AkkaController {
 
   @GetMapping(path = Array("/response/{amount}"))
   @ResponseBody def getActorResponse(@PathVariable amount: Int): Array[String] = {
-
     implicit val timeout = Timeout(5L, TimeUnit.SECONDS)
     val listA = ArrayBuffer.empty[Actor]
     val responseList = ArrayBuffer.empty[String]
@@ -44,10 +44,9 @@ class AkkaController {
           myActor ! PoisonPill
           responseList += result
         }*/
-
-
-    return responseList.toArray
+    responseList.toArray
   }
+
 
   @GetMapping(path = Array("/response/test"))
   def getActorResponse2: String = {
@@ -60,6 +59,15 @@ class AkkaController {
 
     Thread.sleep(5000)
     "work"
+  }
+
+  @GetMapping(path = Array("/response/test2"))
+  def getActorResponse3: String = {
+    implicit val timeout = Timeout(5L, TimeUnit.SECONDS)
+    val pubber = system.actorOf(PublishActor.props())
+    val future = pubber ? "start"
+    val result = Await.result(future, timeout.duration).asInstanceOf[String]
+    ""
   }
 
 }
