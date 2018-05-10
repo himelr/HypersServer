@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
+import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
 import com.example.demo.MyMsg
@@ -16,7 +17,7 @@ import scala.language.postfixOps
 
 @CrossOrigin(origins = Array("http://localhost:4200", "http://localhost:8080", "https://hypers-server.herokuapp.com"))
 @RestController
-@RequestMapping(path = Array("/api"))
+@RequestMapping(path = Array("/api/akka"))
 class AkkaController {
   val system = ActorSystem("hyperscluster")
   println(s"now creating a router towards node actors")
@@ -61,13 +62,14 @@ class AkkaController {
     "work"
   }
 
-  @GetMapping(path = Array("/response/test2"))
-  def getActorResponse3: String = {
-    implicit val timeout = Timeout(5L, TimeUnit.SECONDS)
+  @GetMapping(path = Array("/get/book"))
+  def getActorResponse3: Array[String] = {
+    implicit val timeout = Timeout(8L, TimeUnit.SECONDS)
     val pubber = system.actorOf(PublishActor.props())
+    //pubber ! "start"
     val future = pubber ? "start"
-    val result = Await.result(future, timeout.duration).asInstanceOf[String]
-    ""
+    val result: Array[String] = Await.result(future, timeout.duration).asInstanceOf[Array[String]]
+    result
   }
 
 }

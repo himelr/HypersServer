@@ -20,6 +20,7 @@ class BookController(@Autowired private val bookRepository: BookRepository) {
     book.pages.add(new Page("hello", book, 1))
     book.pages.add(new Page("bajs", book, 2))
     book.pages.add(new Page("fsdfsdfsdfsfsdfsdfsfsdfds", book, 3))
+    book.numberOfPages = book.pages.size()
 
     val book2 = new Book("Pog book")
     book2.pages.add(new Page("monkey", book2, 1))
@@ -28,6 +29,7 @@ class BookController(@Autowired private val bookRepository: BookRepository) {
     book2.pages.add(new Page("jhgfjghjhgjghj", book2, 4))
     book2.pages.add(new Page("123124", book2, 5))
     book2.pages.add(new Page("dsds", book2, 6))
+    book2.numberOfPages = book2.pages.size()
 
     bookRepository.save(book)
     bookRepository.save(book2)

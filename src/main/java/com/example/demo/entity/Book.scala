@@ -21,6 +21,10 @@ class Book() extends Serializable {
   var name: String = _
 
   @BeanProperty
+  @Column(name = "number_of_pages")
+  var numberOfPages: Int = _
+
+  @BeanProperty
   @OneToMany(fetch = FetchType.EAGER, cascade = Array(CascadeType.ALL), mappedBy = "book")
   var pages: java.util.List[Page] = _
 
