@@ -1,14 +1,14 @@
 package com.example.demo.controllers
 
+import java.util
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorSystem, Props}
-import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
+import akka.actor.{Actor, ActorSystem}
 import akka.pattern.ask
-import akka.routing.RoundRobinPool
 import akka.util.Timeout
 import com.example.demo.MyMsg
-import com.example.demo.actors.{NodeActor, PublishActor}
+import com.example.demo.actors.PublishActor
+import com.example.demo.entity.Page
 import org.springframework.web.bind.annotation._
 
 import scala.collection.mutable.ArrayBuffer
@@ -20,17 +20,6 @@ import scala.language.postfixOps
 @RequestMapping(path = Array("/api/akka"))
 class AkkaController {
   val system = ActorSystem("hyperscluster")
-  println(s"now creating a router towards node actors")
-  val router = system.actorOf(ClusterRouterPool(
-    local = RoundRobinPool(8),
-    settings = ClusterRouterPoolSettings(
-      totalInstances = 15,
-      maxInstancesPerNode = 4,
-      allowLocalRoutees = false
-    )
-  ).props(Props[NodeActor]),
-    name = "routeractor")
-  println(s"router: ${router.path}")
 
   @GetMapping(path = Array("/response/{amount}"))
   @ResponseBody def getActorResponse(@PathVariable amount: Int): Array[String] = {
@@ -63,13 +52,19 @@ class AkkaController {
   }
 
   @GetMapping(path = Array("/get/book"))
-  def getActorResponse3: Array[String] = {
+  @ResponseBody def getActorResponse3: java.util.ArrayList[Page] = {
     implicit val timeout = Timeout(8L, TimeUnit.SECONDS)
     val pubber = system.actorOf(PublishActor.props())
     //pubber ! "start"
     val future = pubber ? "start"
     val result: Array[String] = Await.result(future, timeout.duration).asInstanceOf[Array[String]]
-    result
+    var count = 0
+    val pages = new util.ArrayList[Page]()
+    result.foreach(page => {
+      count += 1;
+      pages.add(new Page(page, null, count))
+    })
+    pages
   }
 
 }

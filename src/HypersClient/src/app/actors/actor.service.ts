@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
+import { Book } from '../book.model';
 
 @Injectable()
 export class ActorService {
@@ -12,6 +13,9 @@ export class ActorService {
     .pipe(
       catchError(this.handleError('getMessages', []))
     );
+  }
+  getBooks() {
+    return this.http.get<Book[]>('/api/book/all');
   }
   constructor(private http: HttpClient) {
   }

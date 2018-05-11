@@ -1,17 +1,13 @@
 <div class="container">
-<mat-form-field>
-  <input matInput [matDatepicker]="picker" placeholder="Input & change events"
-         (dateInput)="addEvent('input', $event)" (dateChange)="addEvent('change', $event)">
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker></mat-datepicker>
-</mat-form-field>
-<div class="example-events">
-  <div *ngFor="let e of events">{{e}}</div>
-</div>
-
-<mat-list role="list">
-  <mat-list-item role="listitem">Item 1</mat-list-item>
-  <mat-list-item role="listitem">Item 2</mat-list-item>
-  <mat-list-item role="listitem">Item 3</mat-list-item>
-</mat-list>
+  <mat-card *ngFor="let book of books">
+    <mat-card-header>
+      <img mat-card-avatar src="https://source.unsplash.com/random/200x200">
+      <mat-card-title>{{book.name}}</mat-card-title>
+      <mat-card-subtitle>ID: {{book.id}}</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image src="https://source.unsplash.com/random/800x600">
+    <mat-card-content>
+      <p>Number of pages {{book.numberOfPages}}</p>
+    </mat-card-content>
+  </mat-card>
 </div>

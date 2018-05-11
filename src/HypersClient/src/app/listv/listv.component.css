@@ -4,3 +4,7 @@
   border: 1px solid #555;
   overflow: auto;
 }
+.mat-card-image {
+  width: 20%;
+  height: 20%;
+}
